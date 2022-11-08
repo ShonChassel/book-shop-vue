@@ -15,8 +15,8 @@ export default {
     template: `
     <section class="book-app">
       <book-filter @filtered="setFilter"/>
-      <book-details v-if="selectedBook" :book="selectedBook" @close="closeDetails"/>
-      <book-list v-else :books="booksToShow" @selected="selectBook" class="cards-container" @remove="removeBook"/>
+      <!-- <book-details  @close="closeDetails"/> -->
+      <book-list v-else :books="booksToShow"  class="cards-container" @remove="removeBook"/>
     </section>
     `,
     created() {
@@ -26,7 +26,6 @@ export default {
     data() {
         return {
             books: [],
-            selectedBook: null,
             filterBy: null
         };
     },

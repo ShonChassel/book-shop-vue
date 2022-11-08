@@ -9,7 +9,7 @@ export default {
         <select name="rate" v-model.number="rate">
             <option v-for="n in 5" :value="n">{{n}}</option>
         </select>
-        <label><input v-model="date" type="date"/></label>
+        <label><input v-model="datepicker" type="date"/></label>
         <textarea class="free-txt" name="Information" v-model="txt" type="text" placeholder="Something in addition" cols="30" rows="5"></textarea>
         <button>SUBMIT</button>
             <!-- <a href="#" @click="submit">SUBMIT</a> -->

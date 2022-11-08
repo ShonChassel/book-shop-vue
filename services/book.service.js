@@ -4,8 +4,12 @@ import booksJson from './../data/books.json' assert {type: 'json'}
 import { storageService } from './async-storage.service.js';
 
 let gBooks
+const GOOGLE_KEY = 'googleDB'
+
 const BOOKS_KEY = 'booksDB'
 _createBooks()
+
+const gGoogleBook = utilService.loadFromStorage(GOOGLE_KEY) || {}
 
 export const bookService = {
     query,
@@ -13,6 +17,9 @@ export const bookService = {
     getById,
     addReview,
     removeReview,
+    ask,
+    addGoogleBook,
+    save
     // save,
     // getEmptyBook,
 }
@@ -59,22 +66,9 @@ function getById(bookId) {
     // return gBooks.find(book => book.id === bookId)
 }
 
-// function removeReview(bookId, reviewId) {
-//     console.log('bookId', bookId);
-//     const books = query()
-//     const idx = books.findIndex(book => book.id === bookId)
-//     books[idx]
-//     console.log(books[idx]);
-//     const reviewIdx = books[idx].reviews.findIndex(review => review.id === reviewId)
-
-//     books[idx].reviews.splice(reviewIdx, 1)
-//     gBooks = books
-//     utilService.saveToStorage(BOOKS_KEY, books)
-// }
-
 function addReview(bookId, review) {
     review.id = utilService.makeId()
-    
+
     return getById(bookId)
         .then(book => {
             console.log('book', book)
@@ -88,7 +82,6 @@ function addReview(bookId, review) {
         })
 }
 
-
 function removeReview(bookId, reviewId) {
     return getById(bookId)
         .then(book => {
@@ -101,12 +94,65 @@ function removeReview(bookId, reviewId) {
         })
 }
 
+function ask(ev) {
+    console.log('googleBook', ev);
+    // if (gGoogleBook[ev]) {
+    //     console.log('book from storage');
+    //     return Promise.resolve(gGoogleBook[ev])
+    // }
+    console.log('books from server')
+    const api = `https://www.googleapis.com/books/v1/volumes?printType=books&q=${ev}`
+    return axios.get(api)
+        .then(books => {
+            return books.data
+            // saveToStorage(STORAGE_KEY, books)
+            // return Promise.resolve(books)
+        })
+}
+
+function addGoogleBook(googleBook) {
+    console.log('googleBook', googleBook);
+    let books = utilService.loadFromStorage(BOOKS_KEY)
+    let book = createBook(googleBook)
+
+    save(book)
+
+}
+
+function createBook(val) {
+    return {
+        id: val.id,
+        title: val.volumeInfo.title,
+        authors: val.volumeInfo.authors,
+        description: val.volumeInfo.description,
+        subtitles: val.volumeInfo.subtitles,
+        pageCount: val.volumeInfo.pageCount,
+        categories: val.volumeInfo.categories,
+        thumbnail: val.volumeInfo.imageLinks.thumbnail,
+        language: val.volumeInfo.language,
+        publishedDate: val.volumeInfo.publishedDate,
+        publishedDate: val.volumeInfo.publishedDate,
+        listPrice: {
+            amount: 226, currencyCode: 'EUR', isOnSale: false,
+        }
+    }
+}
 
 
+    function save(book) {
+        console.log(book);
+        if (book.id) {
+            return storageService.post(BOOKS_KEY, book)
+        } else {
+            return storageService.put(BOOKS_KEY, book)
 
-
-
-
+        }
+    }
+// listPrice: {
+//           amount: 226,
+//           currencyCode: 'EUR',
+//           isOnSale: false,
+//         },
 
 // function addReview(bookId, review) {
 //     console.log('bookId',bookId);
@@ -127,3 +173,22 @@ function removeReview(bookId, reviewId) {
 //     gBooks = books
 //     utilService.saveToStorage(BOOKS_KEY, books)
 // }
+
+
+// {
+//     id: results.id,
+//     title: results.volumeInfo.title,
+//     authors: results.volumeInfo.authors,
+//     description: results.volumeInfo.description,
+//     subtitles: results.volumeInfo.subtitles,
+//     pageCount: results.volumeInfo.pageCount,
+//     categories: results.volumeInfo.categories,
+//     thumbnail: results.volumeInfo.imageLinks.thumbnail,
+//     language: results.volumeInfo.language,
+//     publishedDate: results.volumeInfo.publishedDate,
+//     publishedDate: results.volumeInfo.publishedDate,
+//     listPrice: {
+//       amount: 226,
+//       currencyCode: 'EUR',
+//       isOnSale: false,
+//     },

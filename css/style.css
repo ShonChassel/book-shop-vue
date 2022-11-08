@@ -212,3 +212,24 @@ form {
   width: 200px;
   border-radius: 10px;
 }
+
+.add-book{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  flex-direction: column;
+}
+
+.add-book input{
+  height: 40px;
+  width: 250px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #ec6a6a00;
+}
+
+.googleBook-list li{
+  list-style: none;
+  
+}
